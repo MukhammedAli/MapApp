@@ -11,6 +11,9 @@ import SnapKit
 
 class ViewController: UIViewController {
     
+    var locationManager: CLLocationManager?
+    
+    
     lazy var mapView: MKMapView = {
        let map = MKMapView()
         //map.showsUserLocation = true
@@ -31,6 +34,13 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //initialize location manager
+        
+        locationManager = CLLocationManager()
+        locationManager?.delegate = self
+        locationManager?.requestWhenInUseAuthorization()
+        locationManager?.requestLocation()
         setupUI()
         // Do any additional setup after loading the view.
     }
@@ -64,3 +74,13 @@ class ViewController: UIViewController {
 
 }
 
+extension ViewController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+    }
+}
