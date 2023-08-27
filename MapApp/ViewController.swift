@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     
     lazy var mapView: MKMapView = {
        let map = MKMapView()
-        //map.showsUserLocation = true
+        map.showsUserLocation = true
         return map
     }()
     
@@ -40,6 +40,7 @@ class ViewController: UIViewController {
         locationManager = CLLocationManager()
         locationManager?.delegate = self
         locationManager?.requestWhenInUseAuthorization()
+        locationManager?.requestAlwaysAuthorization()
         locationManager?.requestLocation()
         setupUI()
         // Do any additional setup after loading the view.
@@ -71,13 +72,32 @@ class ViewController: UIViewController {
         }
     }
 
-
+    private func checkLocationAuthorization() {
+        guard let locationManager = locationManager,
+              let location = locationManager.location else { return }
+        switch locationManager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            let region  = MKCoordinateRegion(center: location.coordinate , latitudinalMeters: 750, longitudinalMeters: 750)
+            mapView.setRegion( region, animated: true)
+        case .denied:
+            print("")
+        case .notDetermined, .restricted:
+            print("")
+        @unknown default:
+            print("")
+        }
+                
+    }
 }
 
 extension ViewController: CLLocationManagerDelegate {
     
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        <#code#>
+    }
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
+        checkLocationAuthorization()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
